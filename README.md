@@ -4,6 +4,11 @@ Nebulas wallet for the pc client. Nebulas users can use it to send transactions 
 
 Nebulas already has a JavaScript library [neb.js](https://github.com/nebulasio/neb.js) that implements address generation, transaction signing, and submission. We will use the [electron](https://electronjs.org/) to implement our client.
 
+### Build project
+cd neb-desk-wallet
+
+electron-packager .
+
 ### TODO list
 
 - generate nebulas address/account
