@@ -1,37 +1,22 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron');
-var fs = require('fs');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 function createWindow() {
-    var walletCheckFile = 'keydir/defaultwallet';
-    var walletFile = null;
-    var isWalletExists = false;
-    if (fs.existsSync(walletCheckFile)) {
-        walletFile = fs.readFile(walletCheckFile);
-        walletFile = 'keydir/' + walletFile + '.json';
-        if (fs.existsSync(walletFile)) {
-            isWalletExists = true;
-        }
-    }
+    //console.log(app.getAppPath());
+
+    mainWindow = new BrowserWindow({width: 980, height: 720});
+    var isWalletExists = !!require('./js/tools').getDefaultAddress(app);
+    //var isWalletExists = true;
 
     if (isWalletExists) {
-
+        mainWindow.loadFile('web/sendNas.html');
     } else {
-
+        mainWindow.loadFile('web/index.html');
     }
-
-    // Create the browser window.
-    mainWindow = new BrowserWindow({width: 980, height: 720});
-
-    // and load the index.html of the app.
-    mainWindow.loadFile('web/index.html');
-
-    // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {

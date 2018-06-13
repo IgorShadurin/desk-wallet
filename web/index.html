@@ -29,87 +29,102 @@
     </style>
 </head>
 <body>
-    <div class=logo-main></div>
-    <div class=header></div>
+<div class=logo-main></div>
+<div class=header></div>
 
-    <div class="container wallet">
-        <div id=newWallet>
-            <div class=form-group>
-                <label for=password data-i18n=new/enter-password>Enter a password:（Not less than 9 characters）</label>
-                <input type=password class=form-control id=password data-i18n=new/placeholder/do-not-forget placeholder="Do NOT forget to save this!" data-validate-order-matters="required lengthGt8">
-            </div>
-            <button class="btn btn-block" data-i18n=new/new id=creat>Create New Wallet</button>
+<div class="container wallet">
+    <div id=newWallet>
+        <div class=form-group>
+            <label for=password data-i18n=new/enter-password>Enter a password:（Not less than 9 characters）</label>
+            <input type=password class=form-control id=password data-i18n=new/placeholder/do-not-forget
+                   placeholder="Do NOT forget to save this!" data-validate-order-matters="required lengthGt8">
         </div>
-        <div class="active1 download">
-            <h1>
-                <span data-i18n=new/save1>Save your</span>
-                <code data-i18n=keystore-file></code>
-                <span data-i18n=new/save3>File.</span>
-            </h1>
-            <button class="btn btn-block" data-i18n=new/gen>Download Keystore File</button>
-        </div>
-        <p class=wallet_help data-i18n=new/comment>
-            This password encrypts your private key.
-            <br>This does not act as a seed to generate your keys.
-            <br>You will need this password + your private key to unlock your wallet.
-        </p>
+        <button class="btn btn-block" data-i18n=new/new id=creat>Create New Wallet</button>
     </div>
+    <div class="active1 download">
+        <h1>
+            <span data-i18n=new/save1>Save your</span>
+            <code data-i18n=keystore-file></code>
+            <span data-i18n=new/save3>File.</span>
+        </h1>
+        <button class="btn btn-block" data-i18n=new/gen>Download Keystore File</button>
+    </div>
+    <p class=wallet_help data-i18n=new/comment>
+        This password encrypts your private key.
+        <br>This does not act as a seed to generate your keys.
+        <br>You will need this password + your private key to unlock your wallet.
+    </p>
+</div>
 
-    <div class=footer></div>
+<div class=footer></div>
 
-    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<script>if (typeof module === 'object') {
+    window.module = module;
+    module = undefined;
+}</script>
 
-    <script src=lib/jquery-3.3.1.min.js></script>
-    <script src=lib/bootstrap-4.0.0-dist/js/bootstrap.bundle.min.js data-depends=jquery.slim></script>
-    <script src=lib/bootbox.min.js data-depends="bootstrap jquery.slim"></script>
-    <script src=lib/Blob.js></script>
-    <script src=lib/FileSaver.min.js></script>
-    <script src=lib/nebulas.js></script>
-    <script src=js/1-localSave.js></script>
-    <script src=js/home.v1.js></script>
-    <script src=js/i18n.js data-depends=jquery.slim></script>
-    <script src=js/ui-block.js data-depends="bootbox blockies jquery.slim i18n.js nebulas.js"></script>
-    <script>if (window.module) module = window.module;</script>
-    <script>
-        "use strict";
+<script src=lib/jquery-3.3.1.min.js></script>
+<script src=lib/bootstrap-4.0.0-dist/js/bootstrap.bundle.min.js data-depends=jquery.slim></script>
+<script src=lib/bootbox.min.js data-depends="bootstrap jquery.slim"></script>
+<script src=lib/Blob.js></script>
+<script src=lib/FileSaver.min.js></script>
+<script src=lib/nebulas.js></script>
+<script src=js/1-localSave.js></script>
+<script src=js/home.v1.js></script>
+<script src=js/i18n.js data-depends=jquery.slim></script>
+<script src=js/ui-block.js data-depends="bootbox blockies jquery.slim i18n.js nebulas.js"></script>
+<script>if (window.module) module = window.module;</script>
+<script>
+    "use strict";
 
-        // replace ="([^ =]+)" with =$1
+    var fs = require('fs');
+    var path = require('path');
+    //var appDir = path.dirname(require.main.filename);
+    var appDir = require('electron').remote.app.getAppPath();
 
-        var nebulas = require("nebulas"),
-            account = nebulas.Account.NewAccount(), //TODO：流程位置 应该在创建之后 。创建密码应该删除 
-            validateAll = uiBlock.validate();
+    var nebulas = require("nebulas"),
+        account = nebulas.Account.NewAccount(), //TODO：流程位置 应该在创建之后 。创建密码应该删除
+        validateAll = uiBlock.validate();
 
-        uiBlock.insert({
-            footer: ".footer",
-            header: ".header",
-            logoMain: ".logo-main"
-        });
+    uiBlock.insert({
+        footer: ".footer",
+        header: ".header",
+        logoMain: ".logo-main"
+    });
 
-        $("#creat").on("click", onClickCreate);
-        $(".download button").on("click", onClickDownloadButton);
+    $("#creat").on("click", onClickDownloadButton);
 
-        function onClickCreate() {
-            validateAll() && $(".download").removeClass("active1");
-        }
+    function onClickDownloadButton() {
+        var password = $("#password").val(), address, keyStr;
 
-        function onClickDownloadButton() {
-            var password = $("#password").val(), address, keyStr, blob;
+        if (validateAll()) {
+            bootbox.alert({
+                message: "waiting...",
+                title: "info"
+            });
 
-            if (validateAll()) {
-                bootbox.alert({
-                    message: "waiting...",
-                    title: "info"
-                });
+            address = account.getAddressString();
+            keyStr = account.toKeyString(password);
+            fs.writeFile(appDir + "/bin/keydir/" + address + '.json', keyStr, function (err) {
+                if (err) {
+                    return console.log(err);
+                }
 
-                // window.open('tokey.html?password=' + password, '_blank');
-
-                address = account.getAddressString();
-                keyStr = account.toKeyString(password);
-                blob = new Blob([keyStr], { type: "application/json; charset=utf-8" });
-                saveAs(blob, address);
                 bootbox.hideAll();
-            }
+                console.log("The file was saved!");
+                fs.writeFile(appDir + "/bin/defaultwallet", address, function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+
+                    //bootbox.hideAll();
+                    const currentWindow = remote.getCurrentWindow();
+                    currentWindow.loadFile('web/sendNas.html');
+
+                });
+            });
         }
-    </script>
+    }
+</script>
 </body>
 </html>
