@@ -8,7 +8,7 @@ let mainWindow;
 function createWindow() {
     //console.log(app.getAppPath());
 
-    mainWindow = new BrowserWindow({width: 980, height: 720});
+    mainWindow = new BrowserWindow({width: 1000, height: 720});
     var isWalletExists = !!require('./js/tools').getDefaultAddress(app);
     //var isWalletExists = true;
 

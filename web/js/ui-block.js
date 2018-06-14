@@ -73,32 +73,25 @@ var uiBlock = function () {
         function header(selector) {
             var arr = [];
             var tools = require('../js/tools');
-            var isWalletExists = !!tools.getDefaultAddress(require('electron').remote.app);
-            //var isWalletExists = true;
+            //var isWalletExists = !!tools.getDefaultAddress(require('electron').remote.app);
 
-            if (isWalletExists) {
-                arr = {
-                    "sendNas.html": "header/send",
-                    "sendOffline.html": "header/send-offline",
-                    "viewWalletInfo.html": "header/view",
-                    "check.html": "header/check",
-                    "contract.html": "header/contract"
-                };
-            } else {
-                arr = {
-                    "index.html": "header/new-wallet"
-                }
-            }
-
-            var i, len;
-
-            for (i = 0, len = arr.length; i < len; ++i)
-                if (location.pathname.indexOf(arr[i]) != -1)
-                    arr[i] += " class=checked";
+            arr = {
+                "index.html": "header/new-wallet",
+                "sendNas.html": "header/send",
+                "sendOffline.html": "header/send-offline",
+                "viewWalletInfo.html": "header/view",
+                "check.html": "header/check",
+                "contract.html": "header/contract"
+            };
 
             var htmlStr = "<div>";
             for (var key in arr) {
-                htmlStr += "<a href=" + key + " data-i18n=" + arr[key] + "></a>";
+                var checkedText = "";
+                if (location.pathname.indexOf(key) !== -1) {
+                    checkedText = "class=checked";
+                }
+
+                htmlStr += "<a href=" + key + " data-i18n=" + arr[key] + " " + checkedText + "></a>";
             }
 
             htmlStr += "</div>" +

@@ -8,12 +8,12 @@ module.exports = {
         var isWalletExists = false;
         if (fs.existsSync(walletCheckFile)) {
             walletId = fs.readFileSync(walletCheckFile);
-            walletFile = appDir + '/bin/keydir/' + isWalletExists + '.json';
+            walletFile = appDir + '/bin/keydir/' + walletId + '.json';
             if (fs.existsSync(walletFile)) {
                 isWalletExists = true;
             }
         }
 
-        return isWalletExists ? isWalletExists : null;
+        return isWalletExists ? walletId : null;
     }
 };

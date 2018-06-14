@@ -80,7 +80,8 @@
     var fs = require('fs');
     var path = require('path');
     //var appDir = path.dirname(require.main.filename);
-    var appDir = require('electron').remote.app.getAppPath();
+    var remote = require('electron').remote;
+    var appDir = remote.app.getAppPath();
 
     var nebulas = require("nebulas"),
         account = nebulas.Account.NewAccount(), //TODO：流程位置 应该在创建之后 。创建密码应该删除
@@ -98,10 +99,10 @@
         var password = $("#password").val(), address, keyStr;
 
         if (validateAll()) {
-            bootbox.alert({
+            /*bootbox.alert({
                 message: "waiting...",
                 title: "info"
-            });
+            });*/
 
             address = account.getAddressString();
             keyStr = account.toKeyString(password);
@@ -110,17 +111,16 @@
                     return console.log(err);
                 }
 
-                bootbox.hideAll();
+                //bootbox.hideAll();
                 console.log("The file was saved!");
                 fs.writeFile(appDir + "/bin/defaultwallet", address, function (err) {
                     if (err) {
                         return console.log(err);
                     }
 
-                    //bootbox.hideAll();
+                    console.log("Send nas loaded");
                     const currentWindow = remote.getCurrentWindow();
                     currentWindow.loadFile('web/sendNas.html');
-
                 });
             });
         }
