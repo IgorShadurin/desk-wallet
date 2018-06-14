@@ -198,15 +198,9 @@ var uiBlock = function () {
                         '            <div class="dropdown-menu api" aria-labelledby=logo-main-dropdown-1>' + sApiButtons +
                         "            </div>" +
                         "        </div>" +
-                        "        <div class=dropdown>" +
-                        '            <button class="btn dropdown-toggle" id=logo-main-dropdown-2 data-toggle=dropdown aria-haspopup=true aria-expanded=false data-i18n=name></button>' +
-                        '            <div class="dropdown-menu lang" aria-labelledby=logo-main-dropdown-2>' + sLangButtons +
-                        "            </div>" +
-                        "        </div>" +
                         "    </div>" +
                         "</div>")
-                    .on("click", ".api > button", onClickMenuApi)
-                    .on("click", ".lang > button", onClickMenuLang),
+                    .on("click", ".api > button", onClickMenuApi),
                 lang);
 
             function onClickMenuApi() {
