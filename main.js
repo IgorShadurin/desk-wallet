@@ -6,11 +6,19 @@ const {app, BrowserWindow} = require('electron');
 let mainWindow;
 
 function createWindow() {
-    //console.log(app.getAppPath());
+    var defaultAddress = require('./js/tools').getDefaultWallet(app);
+    var isWalletExists = !!defaultAddress;
+    //var isWalletExists = true;
 
     mainWindow = new BrowserWindow({width: 1000, height: 720});
-    var isWalletExists = !!require('./js/tools').getDefaultAddress(app);
-    //var isWalletExists = true;
+    if (isWalletExists) {
+        mainWindow.webContents.executeJavaScript("localStorage.setItem('global', JSON.stringify({wallet:{ address: '" + defaultAddress.wallet + "', content: '" + defaultAddress.content + "' }}))").then(function (value) {
+            return value;
+        });
+    }
+
+
+    mainWindow.loadFile('web/index.html');
 
     if (isWalletExists) {
         mainWindow.loadFile('web/sendNas.html');

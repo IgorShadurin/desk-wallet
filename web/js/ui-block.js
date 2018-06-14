@@ -71,11 +71,7 @@ var uiBlock = function () {
         }
 
         function header(selector) {
-            var arr = [];
-            var tools = require('../js/tools');
-            //var isWalletExists = !!tools.getDefaultAddress(require('electron').remote.app);
-
-            arr = {
+            var arr = {
                 "index.html": "header/new-wallet",
                 "sendNas.html": "header/send",
                 "sendOffline.html": "header/send-offline",

@@ -79,9 +79,9 @@
 
     var fs = require('fs');
     var path = require('path');
-    //var appDir = path.dirname(require.main.filename);
     var remote = require('electron').remote;
     var appDir = remote.app.getAppPath();
+
 
     var nebulas = require("nebulas"),
         account = nebulas.Account.NewAccount(), //TODO：流程位置 应该在创建之后 。创建密码应该删除
@@ -100,9 +100,9 @@
 
         if (validateAll()) {
             /*bootbox.alert({
-                message: "waiting...",
-                title: "info"
-            });*/
+             message: "waiting...",
+             title: "info"
+             });*/
 
             address = account.getAddressString();
             keyStr = account.toKeyString(password);
