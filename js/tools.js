@@ -59,10 +59,52 @@ module.exports = {
         fs.writeFileSync(filename, address);
     },
 
+    getNodes: function (app) {
+        var fs = require('fs');
+        var filename = app.getAppPath() + "/nodes";
+        var nodes = null;
+        if (fs.existsSync(filename)) {
+            nodes = fs.readFileSync(filename).toString();
+            if (nodes) {
+                nodes = JSON.parse(nodes);
+            }
+        }
+
+        nodes = nodes ? nodes : {};
+
+        return nodes;
+    },
+
+    addNode: function (app, node) {
+        if (!node) {
+            return;
+        }
+
+        var fs = require('fs');
+        var filename = app.getAppPath() + "/nodes";
+        var nodes = this.getNodes(app);
+        nodes[node] = {
+            ok: 1
+        };
+        fs.writeFileSync(filename, JSON.stringify(nodes));
+    },
+
+    removeNode: function (app, node) {
+        if (!node) {
+            return;
+        }
+
+        var fs = require('fs');
+        var filename = app.getAppPath() + "/nodes";
+        var nodes = this.getNodes(app);
+        delete nodes[node];
+        fs.writeFileSync(filename, JSON.stringify(nodes));
+    },
+
     updateGlobalVars: function (app, window) {
         var defaultAddress = this.getDefaultWalletInfo(app);
 
-        window.webContents.executeJavaScript("localStorage.setItem('global', JSON.stringify({wallets: " + JSON.stringify(this.getWalletsList(app)) + ", wallet:{ address: '" + defaultAddress.wallet + "', content: '" + defaultAddress.content + "' }}))").then(function (value) {
+        window.webContents.executeJavaScript("localStorage.setItem('global', JSON.stringify({nodes: " + JSON.stringify(this.getNodes(app)) + ", wallets: " + JSON.stringify(this.getWalletsList(app)) + ", wallet:{ address: '" + defaultAddress.wallet + "', content: '" + defaultAddress.content + "' }}))").then(function (value) {
             return value;
         });
     }

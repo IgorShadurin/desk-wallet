@@ -55,19 +55,6 @@ var uiBlock = function () {
             Array.isArray(dic[i]) ? bag[i].apply(null, dic[i]) : bag[i](dic[i]);
 
         function footer(selector) {
-            /*i18n.run($(selector)
-             .addClass("container footer")
-             .html(
-             "<div class=logo></div>" +
-             "<nav class=text-center>" +
-             "    <a href=https://nebulas.io/ data-i18n=home></a>" +
-             "    <a href=https://nebulas.io/technology.html data-i18n=technology></a>" +
-             "    <a href=https://nebulas.io/community.html data-i18n=community></a>" +
-             "    <a href=https://nebulas.io/team.html data-i18n=team></a>" +
-             "    <a href=https://nebulas.io/resources.html data-i18n=resources></a>" +
-             "    <a href=https://medium.com/nebulasio data-i18n=blog target=_blank></a>" +
-             "</nav>" +
-             '<div class="copyright text-center">Copyright &copy; 2018 Nebulas.io, 645 Howard Street, San Francisco</div>'));*/
         }
 
         function header(selector) {
@@ -77,7 +64,8 @@ var uiBlock = function () {
                 "sendOffline.html": "header/send-offline",
                 "viewWalletInfo.html": "header/view",
                 "check.html": "header/check",
-                "contract.html": "header/contract"
+                "contract.html": "header/contract",
+                "nodes.html": "header/nodes"
             };
 
             var htmlStr = "<div>";

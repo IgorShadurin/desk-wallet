@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <link rel="icon shortcut" href=img/logo.png type=image/png>
+    <link rel=apple-touch-icon href=img/logo.png>
+    <link rel=stylesheet href=lib/bootstrap-4.0.0-dist/css/bootstrap.min.css>
+    <link rel=stylesheet href=css/base.css>
+    <link rel=stylesheet href=css/ui-block.css>
+    <meta name=viewport content="width=device-width">
+    <title>NEBULAS</title>
+    <style>
+        input {
+            text-align: center;
+        }
+
+        .display-none {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class=logo-main></div>
+<div class=header></div>
+
+<div class="container wallet">
+    <div id="nodes" class="display-none">
+
+    </div>
+    <hr id="hr" class="display-none">
+
+    <div id=newWallet>
+        <div class=form-group>
+            <label for=url data-i18n=new/enter-url>Enter an URL</label>
+            <input class=form-control id=url data-i18n=new/placeholder/paste-node-url
+                   placeholder="-" data-validate-order-matters="required">
+        </div>
+        <button class="btn btn-block" data-i18n=new/add-node id=add-node>Add Node</button>
+    </div>
+
+
+</div>
+
+<div class=footer></div>
+
+<script>if (typeof module === 'object') {
+    window.module = module;
+    module = undefined;
+}</script>
+
+<script src=lib/jquery-3.3.1.min.js></script>
+<script src=lib/bootstrap-4.0.0-dist/js/bootstrap.bundle.min.js data-depends=jquery.slim></script>
+<script src=lib/bootbox.min.js data-depends="bootstrap jquery.slim"></script>
+<script src=lib/Blob.js></script>
+<script src=lib/FileSaver.min.js></script>
+<script src=lib/nebulas.js></script>
+<script src=js/1-localSave.js></script>
+<script src=js/home.v1.js></script>
+<script src=js/i18n.js data-depends=jquery.slim></script>
+<script src=js/ui-block.js data-depends="bootbox blockies jquery.slim i18n.js nebulas.js"></script>
+<script>if (window.module) module = window.module;</script>
+<script>
+    "use strict";
+
+    var fs = require('fs');
+    var path = require('path');
+    var remote = require('electron').remote;
+    var appDir = remote.app.getAppPath();
+    var glob = JSON.parse(localStorage.getItem('global'));
+    var tools = require('../js/tools');
+
+    console.log(glob);
+
+    var nebulas = require("nebulas"),
+        account = nebulas.Account.NewAccount(),
+        validateAll = uiBlock.validate();
+
+    uiBlock.insert({
+        footer: ".footer",
+        header: ".header",
+        logoMain: ".logo-main"
+    });
+
+    $("#add-node").on("click", onAddNode);
+
+    var nodes = $('#nodes');
+
+    if (glob.nodes && Object.keys(glob.nodes).length) {
+        nodes.removeClass('display-none');
+        $('#hr').removeClass('display-none');
+        for (var key in glob.nodes) {
+            //var isDefault = glob.nodes[key].isDefault;
+            nodes.append('<p>' + key + ' (<a class="btn-delete" data-url="' + key + '" href="#">Delete</a>)</p>');
+        }
+    }
+
+    function onAddNode() {
+        var urlElement = $('#url');
+        var url = urlElement.val();
+        if (url) {
+            tools.addNode(remote.app, url);
+            urlElement.val('');
+            tools.updateGlobalVars(remote.app, remote.getCurrentWindow());
+            remote.getCurrentWindow().loadFile('web/nodes.html');
+        }
+    }
+
+    $('.btn-delete').on('click', function () {
+        var url = $(this).attr('data-url');
+        if (url) {
+            const currentWindow = remote.getCurrentWindow();
+            tools.updateGlobalVars(remote.app, currentWindow);
+            tools.removeNode(remote.app, url);
+            tools.updateGlobalVars(remote.app, remote.getCurrentWindow());
+            currentWindow.loadFile('web/nodes.html');
+        }
+    });
+</script>
+</body>
+</html>
