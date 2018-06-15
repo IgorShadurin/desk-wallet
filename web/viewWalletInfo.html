@@ -41,15 +41,6 @@
                 <input type=text id=amount class=form-control disabled>
             </div>
             <div class=form-group>
-                <label for=keystore>
-                    <span data-i18n=keystore-file>Keystore File</span>
-                    (JSON / Recommended / Encrypted)
-                </label>
-                <button type=submit class="btn btn-default col-xs-12 col-sm-12 col-md-12 text-center" id=keystore
-                        data-i18n=download>Download
-                </button>
-            </div>
-            <div class=form-group>
                 <label for=password data-i18n=wallet-info/private-key>Private Key (unencrypted)</label>
                 <input type=password id=password class=form-control disabled>
                 <div>
@@ -93,20 +84,13 @@
 
 <script>
     "use strict";
-
-    var glob = JSON.parse(localStorage.getItem('global'));
-    console.log(glob);
-
     var nebulas = require("nebulas"),
-        Account = nebulas.Account,
         Neb = nebulas.Neb,
-        Transaction = nebulas.Transaction,
         Utils = nebulas.Utils,
         neb = new Neb(),
         gAccount, gFileJson;
 
     neb.setRequest(new nebulas.HttpRequest(localSave.getItem("apiPrefix") || "https://testnet.nebulas.io/"));
-    //$("#keystore").on("click", onClickKeystore);
     $("#togglePassword").on("change", onChangeTogglePassword);
 
     uiBlock.insert({
@@ -122,8 +106,6 @@
             gAccount = account;
             gFileJson = fileJson;
             account.fromKey(fileJson, password);
-            //console.log(glob.wallet.content);
-            //account.fromKey(glob.wallet.content, password);
 
             $("#address").val(account.getAddressString());
             $("#sideaddress").text(account.getAddressString());
@@ -163,11 +145,6 @@
             });
         }
     }
-
-    /*function onClickKeystore() {
-     var blob = new Blob([JSON.stringify(gFileJson)], {type: "application/json; charset=utf-8"});
-     saveAs(blob, gAccount.getAddressString());
-     }*/
 
     function onChangeTogglePassword(e) {
         if (e.target.checked) {
