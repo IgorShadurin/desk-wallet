@@ -1,8 +1,19 @@
-# desk-wallet
+# Nebulas Desktop Wallet
 
 Nebulas wallet for the pc client. Nebulas users can use it to send transactions and submit smart contracts. It also manages the local node of the nebulas.
 
 Nebulas already has a JavaScript library [neb.js](https://github.com/nebulasio/neb.js) that implements address generation, transaction signing, and submission. We will use the [electron](https://electronjs.org/) to implement our client.
+
+### Features
+- Multiple addresses
+- Creating accounts
+- Send transactions
+- View address / account info
+- View transaction status & info
+- Deploy / call smart contract
+- Choose Nebulas network (Testnet, Mainnet, Custom networks)
+- Manage Nebulas nodes
+
 
 ### Build project
 

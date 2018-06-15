@@ -33,6 +33,10 @@
 <div class=header></div>
 
 <div class="container wallet">
+    <div id="wallets">
+
+    </div>
+    <hr>
     <div id=newWallet>
         <div class=form-group>
             <label for=password data-i18n=new/enter-password>Enter a password:（Not less than 9 characters）</label>
@@ -81,7 +85,8 @@
     var path = require('path');
     var remote = require('electron').remote;
     var appDir = remote.app.getAppPath();
-
+    var glob = JSON.parse(localStorage.getItem('global'));
+    var tools = require('../js/tools');
 
     var nebulas = require("nebulas"),
         account = nebulas.Account.NewAccount(), //TODO：流程位置 应该在创建之后 。创建密码应该删除
@@ -95,15 +100,17 @@
 
     $("#creat").on("click", onClickDownloadButton);
 
+    var wallets = $('#wallets');
+
+    for (var key in glob.wallets) {
+        var isDefault = glob.wallets[key].isDefault;
+        wallets.append('<p>' + key + ' ' + (isDefault ? ' <strong>(Default)</strong>' : ' (<a href="#" data-address="' + key + '" class="set-default-wallet">Set default</a>)') + '</p>');
+    }
+
     function onClickDownloadButton() {
         var password = $("#password").val(), address, keyStr;
 
         if (validateAll()) {
-            /*bootbox.alert({
-             message: "waiting...",
-             title: "info"
-             });*/
-
             address = account.getAddressString();
             keyStr = account.toKeyString(password);
             fs.writeFile(appDir + "/bin/keydir/" + address + '.json', keyStr, function (err) {
@@ -113,18 +120,21 @@
 
                 //bootbox.hideAll();
                 console.log("The file was saved!");
-                fs.writeFile(appDir + "/bin/defaultwallet", address, function (err) {
-                    if (err) {
-                        return console.log(err);
-                    }
-
-                    console.log("Send nas loaded");
-                    const currentWindow = remote.getCurrentWindow();
-                    currentWindow.loadFile('web/sendNas.html');
-                });
+                tools.setDefaultWallet(remote.app, address);
+                tools.updateGlobalVars(remote.app, currentWindow);
+                remote.getCurrentWindow().loadFile('web/sendNas.html');
             });
         }
     }
+
+    $('.set-default-wallet').click(function () {
+        var address = $(this).attr('data-address');
+        const currentWindow = remote.getCurrentWindow();
+
+        tools.setDefaultWallet(remote.app, address);
+        tools.updateGlobalVars(remote.app, currentWindow);
+        remote.getCurrentWindow().loadFile('web/index.html');
+    });
 </script>
 </body>
 </html>

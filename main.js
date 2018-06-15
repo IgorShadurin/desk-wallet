@@ -6,25 +6,23 @@ const {app, BrowserWindow} = require('electron');
 let mainWindow;
 
 function createWindow() {
-    var defaultAddress = require('./js/tools').getDefaultWallet(app);
+    var tools = require('./js/tools');
+    var defaultAddress = tools.getDefaultWalletInfo(app);
     var isWalletExists = !!defaultAddress;
     //var isWalletExists = true;
 
     mainWindow = new BrowserWindow({width: 1000, height: 720});
     if (isWalletExists) {
-        mainWindow.webContents.executeJavaScript("localStorage.setItem('global', JSON.stringify({wallet:{ address: '" + defaultAddress.wallet + "', content: '" + defaultAddress.content + "' }}))").then(function (value) {
-            return value;
-        });
+        tools.updateGlobalVars(app,mainWindow);
     }
-
 
     mainWindow.loadFile('web/index.html');
 
-    if (isWalletExists) {
-        mainWindow.loadFile('web/sendNas.html');
-    } else {
-        mainWindow.loadFile('web/index.html');
-    }
+    /*if (isWalletExists) {
+     mainWindow.loadFile('web/sendNas.html');
+     } else {
+     mainWindow.loadFile('web/index.html');
+     }*/
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {

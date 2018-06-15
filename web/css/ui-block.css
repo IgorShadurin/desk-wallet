@@ -152,6 +152,18 @@ body {
     text-align: center;
     text-overflow: ellipsis;
 }
+.select-wallet-file label.like-file {
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    display: block;
+    font-size: 19px;
+    font-weight: bold;
+    height: auto; /* override bootstrap */
+    line-height: 50px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+}
 
 .select-wallet-file .empty {
     border: 1px solid red;

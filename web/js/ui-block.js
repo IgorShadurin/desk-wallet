@@ -254,8 +254,8 @@ var uiBlock = function () {
             i18n.run($(selector)
                 .addClass("select-wallet-file")
                 .html(
-                    "<p data-i18n=swf/name></p>" +
-                    '<label class="file "><span id="walletAddress">...</span></label>' +
+                    "<p data-i18n=swf/wallet-name></p>" +
+                    '<label class="like-file "><span id="walletAddress">...</span></label>' +
                     '<label class="pass"><span data-i18n=swf/good></span><input type=password></label>' +
                     '<button class="btn btn-block" data-i18n=swf/unlock></button>'
                 )
@@ -268,39 +268,23 @@ var uiBlock = function () {
 
             $('#walletAddress').text(glob.wallet.address);
 
-
-            //function onChangeFile(e) {
-                // read address from json file content, not it's file name
-                var $this = $(this);/*,
-                    file = e.target.files[0],
-                    fr = new FileReader();
-
-                // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
-                // this.value.split(/[\\|/]/).pop()
-                $("<span>" + file.name + "</span>").replaceAll($this.closest(".select-wallet-file").find("label.file > span"));
-                fr.onload = onload;
-                fr.readAsText(file);*/
-
-                // open file, parse json string, create account from address, then it's a success
-                //function onload(e) {
-                    try {
-                        mFileJson = JSON.parse(glob.wallet.content);
-                        console.log(mFileJson);
-                        mAccount = Account.fromAddress(mFileJson.address);
-                        $this.closest(".select-wallet-file").find("label.pass").removeClass("hide");
-                        $this.closest(".select-wallet-file").find("label.file").removeClass("empty");
-                    } catch (e) {
-                        $this.closest(".select-wallet-file").find("label.file").addClass("empty");
-                        bootbox.dialog({
-                            backdrop: true,
-                            onEscape: true,
-                            message: e.message,
-                            size: "large",
-                            title: "Error"
-                        });
-                    }
-                //}
-            //}
+            var $this = $(this);
+            try {
+                mFileJson = JSON.parse(glob.wallet.content);
+                //console.log(mFileJson);
+                mAccount = Account.fromAddress(mFileJson.address);
+                $this.closest(".select-wallet-file").find("label.pass").removeClass("hide");
+                $this.closest(".select-wallet-file").find("label.file").removeClass("empty");
+            } catch (e) {
+                $this.closest(".select-wallet-file").find("label.file").addClass("empty");
+                bootbox.dialog({
+                    backdrop: true,
+                    onEscape: true,
+                    message: e.message,
+                    size: "large",
+                    title: "Error"
+                });
+            }
 
             function onClickFile() {
                 // clear file input
@@ -315,22 +299,11 @@ var uiBlock = function () {
             function onClickUnlock() {
                 var $swf = $(this).closest(".select-wallet-file");
 
-                //if (mFileJson)
-                    if (typeof callback == "function")
-                        callback($swf[0], glob.wallet.content, mAccount, $swf.find("input[type=password]").val());
-                    else
-                        console.log("uiBlock/selectWalletFile - 'callback' parameter not specified, cannot pass result");
-                /*else {
-                    bootbox.dialog({
-                        backdrop: true,
-                        onEscape: true,
-                        message: "<span data-i18n=swf/modal/select/message></span>",
-                        size: "large",
-                        title: "<span data-i18n=swf/modal/select/title></span>"
-                    });
+                if (typeof callback == "function")
+                    callback($swf[0], glob.wallet.content, mAccount, $swf.find("input[type=password]").val());
+                else
+                    console.log("uiBlock/selectWalletFile - 'callback' parameter not specified, cannot pass result");
 
-                    i18n.run($(".bootbox.modal"));
-                }*/
             }
         }
     }
@@ -353,7 +326,7 @@ var uiBlock = function () {
         bounds.bottom = bounds.top + $el.outerHeight();
 
         return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
-    };
+    }
 
     function numberAddComma(n) {
         // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
