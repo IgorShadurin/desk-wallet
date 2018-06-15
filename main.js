@@ -9,7 +9,6 @@ function createWindow() {
     var tools = require('./js/tools');
     var defaultAddress = tools.getDefaultWalletInfo(app);
     var isWalletExists = !!defaultAddress;
-    //var isWalletExists = true;
 
     mainWindow = new BrowserWindow({width: 1000, height: 720});
     if (isWalletExists) {
@@ -17,12 +16,6 @@ function createWindow() {
     }
 
     mainWindow.loadFile('web/index.html');
-
-    /*if (isWalletExists) {
-     mainWindow.loadFile('web/sendNas.html');
-     } else {
-     mainWindow.loadFile('web/index.html');
-     }*/
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
