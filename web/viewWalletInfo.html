@@ -106,7 +106,7 @@
         gAccount, gFileJson;
 
     neb.setRequest(new nebulas.HttpRequest(localSave.getItem("apiPrefix") || "https://testnet.nebulas.io/"));
-    $("#keystore").on("click", onClickKeystore);
+    //$("#keystore").on("click", onClickKeystore);
     $("#togglePassword").on("change", onChangeTogglePassword);
 
     uiBlock.insert({
@@ -116,11 +116,14 @@
         selectWalletFile: [".select-wallet-file", onUnlockFile]
     });
 
+
     function onUnlockFile(swf, fileJson, account, password) {
         try {
             gAccount = account;
             gFileJson = fileJson;
             account.fromKey(fileJson, password);
+            //console.log(glob.wallet.content);
+            //account.fromKey(glob.wallet.content, password);
 
             $("#address").val(account.getAddressString());
             $("#sideaddress").text(account.getAddressString());
@@ -161,10 +164,10 @@
         }
     }
 
-    function onClickKeystore() {
-        var blob = new Blob([JSON.stringify(gFileJson)], {type: "application/json; charset=utf-8"});
-        saveAs(blob, gAccount.getAddressString());
-    }
+    /*function onClickKeystore() {
+     var blob = new Blob([JSON.stringify(gFileJson)], {type: "application/json; charset=utf-8"});
+     saveAs(blob, gAccount.getAddressString());
+     }*/
 
     function onChangeTogglePassword(e) {
         if (e.target.checked) {

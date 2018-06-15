@@ -140,7 +140,7 @@ var uiBlock = function () {
             // apiPrefix
 
             apiList = [
-                {chainId: 100, name: "Local Nodes", url: "http://127.0.0.1:8685"},
+                {chainId: 101, name: "Local Nodes", url: "http://127.0.0.1:8685"},
                 {chainId: 1, name: "Mainnet", url: "https://mainnet.nebulas.io"},
                 {chainId: 1001, name: "Testnet", url: "https://testnet.nebulas.io"}
             ];
@@ -249,25 +249,29 @@ var uiBlock = function () {
         // this block should not add 'container' class by it self, should let user add it
         function selectWalletFile(selector, callback) {
             var mAccount, mFileJson;
+            var glob = JSON.parse(localStorage.getItem('global'));
 
             i18n.run($(selector)
                 .addClass("select-wallet-file")
                 .html(
                     "<p data-i18n=swf/name></p>" +
-                    '<label class="file empty"><span data-i18n=swf/button></span><input type=file></label>' +
-                    '<label class="hide pass"><span data-i18n=swf/good></span><input type=password></label>' +
+                    '<label class="file "><span id="walletAddress">...</span></label>' +
+                    '<label class="pass"><span data-i18n=swf/good></span><input type=password></label>' +
                     '<button class="btn btn-block" data-i18n=swf/unlock></button>'
                 )
                 .on("click", "button", onClickUnlock)
                 .on("keyup", "input[type=password]", onKeyUpPassword)
                 .on({
-                    change: onChangeFile,
+                    //change: onChangeFile,
                     click: onClickFile
                 }, "input[type=file]"));
 
-            function onChangeFile(e) {
+            $('#walletAddress').text(glob.wallet.address);
+
+
+            //function onChangeFile(e) {
                 // read address from json file content, not it's file name
-                var $this = $(this),
+                var $this = $(this);/*,
                     file = e.target.files[0],
                     fr = new FileReader();
 
@@ -275,13 +279,14 @@ var uiBlock = function () {
                 // this.value.split(/[\\|/]/).pop()
                 $("<span>" + file.name + "</span>").replaceAll($this.closest(".select-wallet-file").find("label.file > span"));
                 fr.onload = onload;
-                fr.readAsText(file);
+                fr.readAsText(file);*/
 
                 // open file, parse json string, create account from address, then it's a success
-                function onload(e) {
+                //function onload(e) {
                     try {
-                        mFileJson = JSON.parse(e.target.result);
-                        mAccount = Account.fromAddress(mFileJson.address)
+                        mFileJson = JSON.parse(glob.wallet.content);
+                        console.log(mFileJson);
+                        mAccount = Account.fromAddress(mFileJson.address);
                         $this.closest(".select-wallet-file").find("label.pass").removeClass("hide");
                         $this.closest(".select-wallet-file").find("label.file").removeClass("empty");
                     } catch (e) {
@@ -294,8 +299,8 @@ var uiBlock = function () {
                             title: "Error"
                         });
                     }
-                }
-            }
+                //}
+            //}
 
             function onClickFile() {
                 // clear file input
@@ -310,12 +315,12 @@ var uiBlock = function () {
             function onClickUnlock() {
                 var $swf = $(this).closest(".select-wallet-file");
 
-                if (mFileJson)
+                //if (mFileJson)
                     if (typeof callback == "function")
-                        callback($swf[0], mFileJson, mAccount, $swf.find("input[type=password]").val());
+                        callback($swf[0], glob.wallet.content, mAccount, $swf.find("input[type=password]").val());
                     else
                         console.log("uiBlock/selectWalletFile - 'callback' parameter not specified, cannot pass result");
-                else {
+                /*else {
                     bootbox.dialog({
                         backdrop: true,
                         onEscape: true,
@@ -325,7 +330,7 @@ var uiBlock = function () {
                     });
 
                     i18n.run($(".bootbox.modal"));
-                }
+                }*/
             }
         }
     }
