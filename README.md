@@ -29,17 +29,6 @@ or for build binaries you can Install [electron-packager](https://github.com/ele
 electron-packager .
 ```
 
-### TODO list
-
-- generate nebulas address/account
-- send transaction (NAS & NRC20)
-- send offine transaction
-- view address/account info
-- view transaction status & info
-- deploy/call smart contract
-- choose nebulas network(Testnet, Mainnet etc.)
-- manage nebulas node
-
 
 ## Contribution
 
