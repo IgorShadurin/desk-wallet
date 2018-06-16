@@ -31,9 +31,17 @@
 
     <div id=newWallet>
         <div class=form-group>
-            <label for=url data-i18n=new/enter-url>Enter an URL</label>
-            <input class=form-control id=url data-i18n=new/placeholder/paste-node-url
-                   placeholder="-" data-validate-order-matters="required">
+            <label for=url-name data-i18n=new/url-name>Name</label>
+            <input class=form-control id=url-name data-i18n=new/placeholder/url-name placeholder="-"
+                   data-validate-order-matters="required">
+
+            <label for=url data-i18n=new/enter-url>URL</label>
+            <input class=form-control id=url data-i18n=new/placeholder/paste-node-url placeholder="-"
+                   data-validate-order-matters="required">
+
+            <label for=chain-id data-i18n=new/chain-id>Chain ID</label>
+            <input class=form-control id=chain-id data-i18n=new/placeholder/chain-id placeholder="-"
+                   data-validate-order-matters="required">
         </div>
         <button class="btn btn-block" data-i18n=new/add-node id=add-node>Add Node</button>
     </div>
@@ -83,23 +91,34 @@
 
     $("#add-node").on("click", onAddNode);
 
+    var toolsNodes = tools.getNodes(remote.app);
     var nodes = $('#nodes');
 
-    if (glob.nodes && Object.keys(glob.nodes).length) {
+    if (toolsNodes.length) {
         nodes.removeClass('display-none');
         $('#hr').removeClass('display-none');
-        for (var key in glob.nodes) {
-            //var isDefault = glob.nodes[key].isDefault;
-            nodes.append('<p>' + key + ' (<a class="btn-delete" data-url="' + key + '" href="#">Delete</a>)</p>');
-        }
+        toolsNodes.forEach(function (v) {
+                var name = v.name;
+                var url = v.url;
+                var chainId = v.chainId;
+                nodes.append('<p>' + name + ' - ' + chainId + ' - ' + url + ' (<a class="btn-delete" data-url="' + url + '" href="#">Delete</a>)</p>');
+            }
+        );
     }
 
     function onAddNode() {
         var urlElement = $('#url');
+        var nameElement = $('#url-name');
+        var chainIdElement = $('#chain-id');
+
         var url = urlElement.val();
-        if (url) {
-            tools.addNode(remote.app, url);
+        var name = nameElement.val();
+        var chainId = chainIdElement.val();
+        if (url && name && chainId) {
+            tools.addNode(remote.app, url, name, chainId);
             urlElement.val('');
+            nameElement.val('');
+            chainIdElement.val('');
             tools.updateGlobalVars(remote.app, remote.getCurrentWindow());
             remote.getCurrentWindow().loadFile('web/nodes.html');
         }
@@ -109,10 +128,9 @@
         var url = $(this).attr('data-url');
         if (url) {
             const currentWindow = remote.getCurrentWindow();
-            tools.updateGlobalVars(remote.app, currentWindow);
             tools.removeNode(remote.app, url);
-            tools.updateGlobalVars(remote.app, remote.getCurrentWindow());
-            currentWindow.loadFile('web/nodes.html');
+            tools.updateGlobalVars(remote.app, currentWindow);
+            //currentWindow.loadFile('web/nodes.html');
         }
     });
 </script>

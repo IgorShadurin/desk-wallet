@@ -8,10 +8,10 @@ module.exports = {
         var walletContent = null;
         var isWalletExists = false;
         if (fs.existsSync(walletCheckFile)) {
-            console.log(walletCheckFile);
+            //console.log(walletCheckFile);
 
             walletId = fs.readFileSync(walletCheckFile).toString();
-            console.log(walletId);
+            //console.log(walletId);
 
             if (!walletId) {
                 console.error('Default wallet is empty');
@@ -19,11 +19,11 @@ module.exports = {
             }
 
             walletFile = appDir + '/bin/keydir/' + walletId + '.json';
-            console.log(walletFile);
+            //console.log(walletFile);
 
             if (fs.existsSync(walletFile)) {
                 walletContent = fs.readFileSync(walletFile);
-                console.log(walletContent);
+                //console.log(walletContent);
 
                 isWalletExists = true;
             }
@@ -34,7 +34,7 @@ module.exports = {
 
     getWalletsList: function (app) {
         var defaultWallet = this.getDefaultWalletInfo(app);
-        console.log(defaultWallet);
+        //console.log(defaultWallet);
         var fs = require('fs');
         var appDir = app.getAppPath();
         var path = require('path');
@@ -62,7 +62,7 @@ module.exports = {
     getNodes: function (app) {
         var fs = require('fs');
         var filename = app.getAppPath() + "/nodes";
-        var nodes = null;
+        var nodes = [];
         if (fs.existsSync(filename)) {
             nodes = fs.readFileSync(filename).toString();
             if (nodes) {
@@ -70,23 +70,28 @@ module.exports = {
             }
         }
 
-        nodes = nodes ? nodes : {};
+        nodes = nodes ? nodes : [];
 
         return nodes;
     },
 
-    addNode: function (app, node) {
-        if (!node) {
-            return;
+    addNode: function (app, url, name, chainId) {
+        if (url && name && chainId) {
+        } else {
+            return false;
         }
 
         var fs = require('fs');
         var filename = app.getAppPath() + "/nodes";
         var nodes = this.getNodes(app);
-        nodes[node] = {
-            ok: 1
-        };
+        nodes.push({
+            url: url,
+            name: name,
+            chainId: chainId
+        });
         fs.writeFileSync(filename, JSON.stringify(nodes));
+
+        return true;
     },
 
     removeNode: function (app, node) {
@@ -97,7 +102,24 @@ module.exports = {
         var fs = require('fs');
         var filename = app.getAppPath() + "/nodes";
         var nodes = this.getNodes(app);
-        delete nodes[node];
+        nodes.forEach(function (v, i, a) {
+            if (v.url === node) {
+                delete a[i];
+            }
+        });
+
+        //console.log(nodes);
+        var count = 0;
+        nodes.forEach(function (v, i, a) {
+            if (v) {
+                count++;
+            }
+        });
+        if (!count) {
+            nodes = [];
+        }
+        //console.log(nodes);
+
         fs.writeFileSync(filename, JSON.stringify(nodes));
     },
 
