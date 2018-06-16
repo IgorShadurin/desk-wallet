@@ -9,8 +9,8 @@ function createWindow() {
     var defaultAddress = tools.getDefaultWalletInfo(app);
     var isWalletExists = !!defaultAddress;
     mainWindow = new BrowserWindow({
-        width: 1000,
-        height: 720,
+        width: 1100,
+        height: 800,
         icon: path.join(__dirname, 'icon.png')
     });
     if (isWalletExists) {
