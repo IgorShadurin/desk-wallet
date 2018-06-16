@@ -129,9 +129,9 @@ var uiBlock = function () {
             var tools = require('../js/tools');
             var nodes = tools.getNodes(require('electron').remote.app);
             apiList = [
-                {chainId: 100, name: "Local Nodes", url: "http://127.0.0.1:8685"},
                 {chainId: 1, name: "Mainnet", url: "https://mainnet.nebulas.io"},
-                {chainId: 1001, name: "Testnet", url: "https://testnet.nebulas.io"}
+                {chainId: 1001, name: "Testnet", url: "https://testnet.nebulas.io"},
+                {chainId: 100, name: "Local Nodes", url: "http://127.0.0.1:8685"}
             ];
             apiList = apiList.concat(nodes);
             apiPrefix = (localSave.getItem("apiPrefix") || "").toLowerCase();
