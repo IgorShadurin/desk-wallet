@@ -26,6 +26,10 @@
         .wallet_help {
             font-size: 0.8rem;
         }
+
+        .display-none {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -33,10 +37,10 @@
 <div class=header></div>
 
 <div class="container wallet">
-    <div id="wallets">
+    <div id="wallets" class="display-none">
 
     </div>
-    <hr>
+    <hr id="hr" class="display-none">
     <div id=newWallet>
         <div class=form-group>
             <label for=password data-i18n=new/enter-password>Enter a password:（Not less than 9 characters）</label>
@@ -101,11 +105,16 @@
     $("#creat").on("click", onClickDownloadButton);
 
     var wallets = $('#wallets');
-
-    for (var key in glob.wallets) {
-        var isDefault = glob.wallets[key].isDefault;
-        wallets.append('<p>' + key + ' ' + (isDefault ? ' <strong>(Default)</strong>' : ' (<a href="#" data-address="' + key + '" class="set-default-wallet">Set default</a>)') + '</p>');
+    var walletInfo = tools.getWalletsList(remote.app);
+    if (walletInfo.length) {
+        wallets.removeClass('display-none');
+        $('#hr').removeClass('display-none');
+        walletInfo.forEach(function (v) {
+            var isDefault = v.isDefault;
+            wallets.append('<p>' + v.wallet + ' ' + (isDefault ? ' <strong>(Default)</strong>' : ' (<a href="#" data-address="' + v.wallet + '" class="set-default-wallet">Set default</a>)') + '</p>');
+        });
     }
+
 
     function onClickDownloadButton() {
         var password = $("#password").val(), address, keyStr;
@@ -118,10 +127,12 @@
                     return console.log(err);
                 }
 
+                const currentWindow = remote.getCurrentWindow();
+
                 console.log("The file was saved!");
                 tools.setDefaultWallet(remote.app, address);
                 tools.updateGlobalVars(remote.app, currentWindow);
-                remote.getCurrentWindow().loadFile('web/sendNas.html');
+                currentWindow.loadFile('web/index.html');
             });
         }
     }

@@ -7,12 +7,13 @@ let mainWindow;
 
 function createWindow() {
     var tools = require('./js/tools');
+    tools.createAllDirectories(app);
     var defaultAddress = tools.getDefaultWalletInfo(app);
     var isWalletExists = !!defaultAddress;
 
     mainWindow = new BrowserWindow({width: 1000, height: 720});
     if (isWalletExists) {
-        tools.updateGlobalVars(app,mainWindow);
+        tools.updateGlobalVars(app, mainWindow);
     }
 
     mainWindow.loadFile('web/index.html');

@@ -1,4 +1,17 @@
 module.exports = {
+    createAllDirectories: function (app) {
+        var fs = require('fs');
+        var appDir = app.getAppPath();
+
+        if (!fs.existsSync(appDir + '/bin')) {
+            fs.mkdirSync(appDir + '/bin');
+        }
+
+        if (!fs.existsSync(appDir + '/bin/keydir')) {
+            fs.mkdirSync(appDir + '/bin/keydir');
+        }
+    },
+
     getDefaultWalletInfo: function (app) {
         var fs = require('fs');
         var appDir = app.getAppPath();
@@ -8,10 +21,7 @@ module.exports = {
         var walletContent = null;
         var isWalletExists = false;
         if (fs.existsSync(walletCheckFile)) {
-            //console.log(walletCheckFile);
-
             walletId = fs.readFileSync(walletCheckFile).toString();
-            //console.log(walletId);
 
             if (!walletId) {
                 console.error('Default wallet is empty');
@@ -19,12 +29,8 @@ module.exports = {
             }
 
             walletFile = appDir + '/bin/keydir/' + walletId + '.json';
-            //console.log(walletFile);
-
             if (fs.existsSync(walletFile)) {
                 walletContent = fs.readFileSync(walletFile);
-                //console.log(walletContent);
-
                 isWalletExists = true;
             }
         }
@@ -34,19 +40,19 @@ module.exports = {
 
     getWalletsList: function (app) {
         var defaultWallet = this.getDefaultWalletInfo(app);
-        //console.log(defaultWallet);
         var fs = require('fs');
         var appDir = app.getAppPath();
         var path = require('path');
         var walletsDir = appDir + '/bin/keydir';
-        var files = {};
+        var files = [];
         fs.readdirSync(walletsDir).forEach(function (file) {
             var name = path.basename(file, '.json');
             var isDefault = name == defaultWallet.wallet;
-            files[name] = {
+            files.push({
+                wallet: name,
                 path: walletsDir + "/" + file,
                 isDefault: isDefault
-            };
+            });
         });
 
         return files;
