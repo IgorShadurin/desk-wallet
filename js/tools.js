@@ -38,6 +38,11 @@ module.exports = {
         return isWalletExists ? {wallet: walletId, content: walletContent} : null;
     },
 
+    saveWallet: function (content, address, onComplete) {
+        var fs = require('fs');
+        fs.writeFile(appDir + "/bin/keydir/" + address + '.json', content, onComplete);
+    },
+
     getWalletsList: function (app) {
         var defaultWallet = this.getDefaultWalletInfo(app);
         var fs = require('fs');

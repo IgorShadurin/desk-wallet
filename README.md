@@ -8,6 +8,7 @@ Client supports OS X, Windows, Linux.
 
 ### Features
 - Multiple addresses
+- Importing wallets
 - Creating accounts
 - Send transactions
 - View address / account info

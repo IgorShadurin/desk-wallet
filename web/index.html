@@ -37,6 +37,7 @@
 <div class=header></div>
 
 <div class="container wallet">
+
     <div id="wallets" class="display-none">
 
     </div>
@@ -62,6 +63,9 @@
         <br>This does not act as a seed to generate your keys.
         <br>You will need this password + your private key to unlock your wallet.
     </p>
+
+    <div id="import"></div>
+
 </div>
 
 <div class=footer></div>
@@ -114,15 +118,102 @@
             wallets.append('<p>' + v.wallet + ' ' + (isDefault ? ' <strong>(Default)</strong>' : ' (<a href="#" data-address="' + v.wallet + '" class="set-default-wallet">Set default</a>)') + '</p>');
         });
     }
+    selectWalletFile('#import', function (data) {
+        console.log(data);
+    });
 
+    function selectWalletFile(selector, callback) {
+        var mAccount, mFileJson;
+
+        i18n.run($(selector)
+            .addClass("select-wallet-file")
+            .html(
+                "<p >Import elready exists wallet</p>" +
+                '<label class="file empty"><span data-i18n=swf/button></span><input type=file></label>' +
+                '<label class="hide pass"><span data-i18n=swf/good></span><input type=password></label>'
+                //+ '<button class="btn btn-block" >Unlock and Import</button>'
+            )
+            .on("click", "button", onClickUnlock)
+            .on("keyup", "input[type=password]", onKeyUpPassword)
+            .on({
+                change: onChangeFile,
+                click: onClickFile
+            }, "input[type=file]"));
+
+        function onChangeFile(e) {
+            // read address from json file content, not it's file name
+            var $this = $(this),
+                file = e.target.files[0],
+                fr = new FileReader();
+
+            // https://stackoverflow.com/questions/857618/javascript-how-to-extract-filename-from-a-file-input-control
+            // this.value.split(/[\\|/]/).pop()
+            $("<span>" + file.name + "</span>").replaceAll($this.closest(".select-wallet-file").find("label.file > span"));
+            fr.onload = onload;
+            fr.readAsText(file);
+
+            // open file, parse json string, create account from address, then it's a success
+            function onload(e) {
+                try {
+                    mFileJson = JSON.parse(e.target.result);
+                    console.log(mFileJson);
+                    //mAccount = Account.fromAddress(mFileJson.address);
+                    $this.closest(".select-wallet-file").find("label.pass").removeClass("hide");
+                    $this.closest(".select-wallet-file").find("label.file").removeClass("empty");
+                    tools.saveWallet(e.target.result, mFileJson.address, function (err) {
+                        reloadWindow();
+                    });
+                } catch (e) {
+                    $this.closest(".select-wallet-file").find("label.file").addClass("empty");
+                    bootbox.dialog({
+                        backdrop: true,
+                        onEscape: true,
+                        message: e.message,
+                        size: "large",
+                        title: "Error"
+                    });
+                }
+            }
+        }
+
+        function onClickFile() {
+            // clear file input
+            // https://stackoverflow.com/questions/12030686/html-input-file-selection-event-not-firing-upon-selecting-the-same-file
+            this.value = null;
+        }
+
+        function onKeyUpPassword(e) {
+            e.key == "Enter" && $(this).closest(".select-wallet-file").find("button").click();
+        }
+
+        function onClickUnlock() {
+            var $swf = $(this).closest(".select-wallet-file");
+
+            if (mFileJson)
+                if (typeof callback == "function")
+                    callback($swf[0], mFileJson, mAccount, $swf.find("input[type=password]").val());
+                else
+                    console.log("uiBlock/selectWalletFile - 'callback' parameter not specified, cannot pass result");
+            else {
+                bootbox.dialog({
+                    backdrop: true,
+                    onEscape: true,
+                    message: "<span data-i18n=swf/modal/select/message></span>",
+                    size: "large",
+                    title: "<span data-i18n=swf/modal/select/title></span>"
+                });
+
+                i18n.run($(".bootbox.modal"));
+            }
+        }
+    }
 
     function onClickDownloadButton() {
         var password = $("#password").val(), address, keyStr;
-
         if (validateAll()) {
             address = account.getAddressString();
             keyStr = account.toKeyString(password);
-            fs.writeFile(appDir + "/bin/keydir/" + address + '.json', keyStr, function (err) {
+            tools.saveWallet(keyStr, address, function (err) {
                 if (err) {
                     return console.log(err);
                 }
@@ -135,6 +226,11 @@
                 currentWindow.loadFile('web/index.html');
             });
         }
+    }
+
+    function reloadWindow() {
+        const currentWindow = remote.getCurrentWindow();
+        remote.getCurrentWindow().loadFile('web/index.html');
     }
 
     $('.set-default-wallet').click(function () {

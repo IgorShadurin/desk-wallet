@@ -60,6 +60,9 @@ var i18n = function () {
             "keystore-file": "Keystore File",
             name: "English",
             "new/comment": "This password encrypts your private key.\n" +
+                "This does not act as a seed to generate your keys.",
+            "new/enter-password": "Enter a password:（Not less than 9 characters）",
+            "new/comment-old": "This password encrypts your private key.\n" +
                 "This does not act as a seed to generate your keys.\n" +
                 "You will need this password + your private key to unlock your wallet.",
             "new/enter-password": "Enter a password:（Not less than 9 characters）",
