@@ -74,10 +74,18 @@ module.exports = {
         var fs = require('fs');
         var filename = app.getAppPath() + "/nodes";
         var nodes = [];
+        var result = [];
         if (fs.existsSync(filename)) {
             nodes = fs.readFileSync(filename).toString();
             if (nodes) {
                 nodes = JSON.parse(nodes);
+                nodes.forEach(function (v, i, a) {
+                    if (v) {
+                        result.push(v);
+                    }
+                });
+
+                nodes = result;
             }
         }
 
